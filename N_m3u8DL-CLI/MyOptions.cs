@@ -106,5 +106,11 @@ namespace N_m3u8DL_CLI
         [Option("chaCha20NonceBase64", HelpText = "ChaCha20NonceBase64")]
         public string ChaCha20NonceBase64 { get; set; }
 
+        [Option("enableIQYDrm", HelpText = "Help_enableIQYDrm", ResourceType = typeof(strings))]
+        public bool EnableIQYDrm { get; set; }
+
+
+        [Option("enableYouKuAes", HelpText = "Help_enableYouKuAes", ResourceType = typeof(strings))]
+        public bool EnableYouKuAes { get; set; }
     }
 }

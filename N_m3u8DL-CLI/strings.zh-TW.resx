@@ -375,4 +375,10 @@
   <data name="unregisterUrlProtocolSuccessful" xml:space="preserve">
     <value>取消注册m3u8dl連結協定成功！</value>
   </data>
+  <data name="Help_enableIQYDrm" xml:space="preserve">
+    <value>Help_enableYouKuAes</value>
+  </data>
+  <data name="Help_enableYouKuAes" xml:space="preserve">
+    <value>Help_enableYouKuAes</value>
+  </data>
 </root>

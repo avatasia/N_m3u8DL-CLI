@@ -222,6 +222,8 @@ namespace N_m3u8DL_CLI.NetCore
                 if (o.NoProxy) Global.NoProxy = true;
                 if (o.DisableIntegrityCheck) DownloadManager.DisableIntegrityCheck = true;
                 if (o.EnableAudioOnly) Global.VIDEO_TYPE = "IGNORE";
+                if (o.EnableIQYDrm) Downloader.IQYDrm = true;
+                if (o.EnableYouKuAes) Downloader.YouKuAES = true;
                 if (!string.IsNullOrEmpty(o.WorkDir))
                 {
                     workDir = Environment.ExpandEnvironmentVariables(o.WorkDir);

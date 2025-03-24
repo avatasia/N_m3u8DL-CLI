@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using NiL.JS.BaseLibrary;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +15,8 @@ namespace N_m3u8DL_CLI
 {
     class Downloader
     {
+        public static bool YouKuAES;
+        public static bool IQYDrm;
         private int timeOut = 0;
         private int retry = 5;
         private int count = 0;
@@ -94,11 +99,12 @@ namespace N_m3u8DL_CLI
                         byte[] encryptedBuff = Global.HttpDownloadFileToBytes(fileUrl, Headers, TimeOut);
                         //byte[] encryptedBuff = Global.WebClientDownloadToBytes(fileUrl, Headers);
                         byte[] decryptBuff = null;
-                        decryptBuff = Decrypter.AES128Decrypt(
-                            encryptedBuff,
-                            Convert.FromBase64String(Key),
-                            Decrypter.HexStringToBytes(Iv)
-                            );
+                        //decryptBuff = Decrypter.AES128Decrypt(
+                        //    encryptedBuff,
+                        //    Convert.FromBase64String(Key),
+                        //    Decrypter.HexStringToBytes(Iv)
+                        //    );
+                        decryptBuff = (!YouKuAES) ? Decrypter.AES128Decrypt(encryptedBuff, Convert.FromBase64String(Key), Decrypter.HexStringToBytes(Iv)) : DecrypterYK.Decrypt(encryptedBuff, Convert.FromBase64String(Key), Decrypter.HexStringToBytes(Iv));
                         Global.AppendBytesToFileStreamAndDoNotClose(LiveStream, decryptBuff);
                         LOGGER.PrintLine("<" + SegIndex + " Complete>\r\n");
                         LOGGER.WriteLine("<" + SegIndex + " Complete>");
@@ -205,23 +211,24 @@ namespace N_m3u8DL_CLI
                         try
                         {
                             byte[] decryptBuff = null;
-                            if(fileUrl.Contains(".51cto.com/")) //使用AES-128-ECB模式解密
-                            {
-                                decryptBuff = Decrypter.AES128Decrypt(
-                                    fi.FullName,
-                                    Convert.FromBase64String(Key),
-                                    Decrypter.HexStringToBytes(Iv),
-                                    System.Security.Cryptography.CipherMode.ECB
-                                    );
-                            }
-                            else
-                            {
-                                decryptBuff = Decrypter.AES128Decrypt(
-                                    fi.FullName,
-                                    Convert.FromBase64String(Key),
-                                    Decrypter.HexStringToBytes(Iv)
-                                    );
-                            }
+                            //if(fileUrl.Contains(".51cto.com/")) //使用AES-128-ECB模式解密
+                            //{
+                            //    decryptBuff = Decrypter.AES128Decrypt(
+                            //        fi.FullName,
+                            //        Convert.FromBase64String(Key),
+                            //        Decrypter.HexStringToBytes(Iv),
+                            //        System.Security.Cryptography.CipherMode.ECB
+                            //        );
+                            //}
+                            //else
+                            //{
+                            //    decryptBuff = Decrypter.AES128Decrypt(
+                            //        fi.FullName,
+                            //        Convert.FromBase64String(Key),
+                            //        Decrypter.HexStringToBytes(Iv)
+                            //        );
+                            //}
+                            decryptBuff = (YouKuAES ? DecrypterYK.Decrypt(File.ReadAllBytes(fi.FullName), Convert.FromBase64String(Key), Decrypter.HexStringToBytes(Iv)) : (IQYDrm ? new DecrypterIQY(Convert.FromBase64String(Key), File.ReadAllBytes(fi.FullName)).GetDecryptedData() : ((!FileUrl.Contains(".51cto.com/")) ? Decrypter.AES128Decrypt(fi.FullName, Convert.FromBase64String(Key), Decrypter.HexStringToBytes(Iv)) : Decrypter.AES128Decrypt(fi.FullName, Convert.FromBase64String(Key), Decrypter.HexStringToBytes(Iv), CipherMode.ECB))));
                             FileStream fs = new FileStream(Path.GetDirectoryName(savePath) + "\\" + Path.GetFileNameWithoutExtension(savePath) + ".ts", FileMode.Create);
                             fs.Write(decryptBuff, 0, decryptBuff.Length);
                             fs.Close();

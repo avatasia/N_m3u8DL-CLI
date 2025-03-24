@@ -375,4 +375,10 @@
   <data name="unregisterUrlProtocolSuccessful" xml:space="preserve">
     <value>Unregister m3u8dl URL protocol successfully!</value>
   </data>
+  <data name="Help_enableIQYDrm" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Help_enableYouKuAes" xml:space="preserve">
+    <value />
+  </data>
 </root>
